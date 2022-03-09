@@ -1,36 +1,18 @@
 //Lets require import the FS module
-var fs = require('fs');
+const http = require('http');
+const randopeep = require('randopeep');
+const EventEmitter = require('events');
+const WebSocketServer = require('websocket').server;
 
-// Express is our web framework for building a rest API
-var express = require('express');
-var app = express();
-var cors = require('cors');
-app.use(cors()); // enable CORS to allow requests from frontend
+const eventEmitter = new EventEmitter();
 
-var nodeStatic = require('node-static');
-
-// register handler to return driver data
-app.get('/', function (req, res) {
-  fs.readFile('./index.get.json', 'utf8', (err, data) => {
-    res.send(data);
-  });
-});
-
-var randopeep = require('randopeep');
-/*
- * randopeep is for generating stuff that we can include in our fake data.
- * */
-
-var file = new nodeStatic.Server('../app');
-
-fs.writeFileSync('./index.get.json', '[]');
+const driverData = [];
 
 //Generate 10 objects to work with in the backend for the front end
 for (let i = 0; i < 20; i++) genObj();
 
 function genObj() {
-  var o = JSON.parse(fs.readFileSync('./index.get.json', 'utf8'));
-  var d = {
+  const d = {
     driverName: randopeep.name(),
     driverCityOrigin: randopeep.address.city(),
     driverLanguage: ['de', 'en', 'nl', 'fr', 'es', 'ar'][
@@ -43,38 +25,46 @@ function genObj() {
     kmDriven: Math.floor(Math.random() * 100000),
     location: randopeep.address.geo(),
   };
-  o.push(d);
-  fs.writeFileSync('./index.get.json', JSON.stringify(o));
+  driverData.push(d);
 }
 
 // Here we generate data for the api that can be used in the front end
-setTimeout(() => {
-  //var o = JSON.parse(fs.readFileSync('./cars/index.get.json', 'utf8'));
+setInterval(() => {
   //TODO: Move object location random every 5 seconds
-  //fs.writeFile("./cars/index.get.json",
-  //    JSON.stringify(o));
+  console.log('emitting obj');
+  eventEmitter.emit('update', driverData);
 }, 5000);
 
-function cf() {
-  fs.writeFile('./index.get.json', '[]');
-}
+const server = http.createServer((request, response) => {
+  console.log(new Date() + ' Received request for ' + request.url);
+  response.writeHead(404);
+  response.end();
+});
+server.listen(8080, () => {
+  console.log(new Date() + ' Server is listening on port 8080');
+});
 
-var http = require('http');
-// Create the server for serving static files (html, css etc.)
-http
-  .createServer((request, response) => {
-    request
-      .addListener('end', () => {
-        //
-        // Serve files!
-        //
-        file.serve(request, response);
-      })
-      .resume();
-  })
-  .listen(8080);
+const wsServer = new WebSocketServer({
+  httpServer: server,
+  // autoAcceptConnections should be false in production
+  autoAcceptConnections: true,
+});
 
-// Start the REST API server
-app.listen(3000, () => {
-  console.log(`API Server is running`);
+wsServer.on('connect', (connection) => {
+  console.log(new Date() + ' Connection accepted');
+
+  const listener = (data) => {
+    console.log('Receiving data ', data);
+    connection.send(data);
+  };
+
+  eventEmitter.addListener('update', listener);
+
+  connection.on('close', (reasonCode, description) => {
+    console.log(
+      new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.'
+    );
+    console.log(reasonCode + ' ' + description);
+    eventEmitter.removeListener('update', listener);
+  });
 });

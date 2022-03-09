@@ -1,7 +1,13 @@
 import './App.css';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { subscribeDrivers } from 'store/slices/drivers/actions';
 
 const App = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(subscribeDrivers());
+  }, [dispatch]);
   return (
     <div className="App">
       <header className="App-header">

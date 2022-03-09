@@ -55,7 +55,7 @@ wsServer.on('connect', (connection) => {
 
   const listener = (data) => {
     console.log('Receiving data ', data);
-    connection.send(data);
+    connection.send(JSON.stringify(data));
   };
 
   eventEmitter.addListener('update', listener);

@@ -4,14 +4,25 @@ const randopeep = require('randopeep');
 const EventEmitter = require('events');
 const WebSocketServer = require('websocket').server;
 
+const MIN_X = 0;
+const MAX_X = 100;
+const MIN_Y = 0;
+const MAX_Y = 100;
+
 const eventEmitter = new EventEmitter();
 
-const driverData = [];
+let driverData = [];
 
-//Generate 10 objects to work with in the backend for the front end
-for (let i = 0; i < 20; i++) genObj();
+// min and max included
+const randInterval = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
 
-function genObj() {
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+const clampX = (x) => clamp(x, MIN_X, MAX_X);
+const clampY = (y) => clamp(y, MIN_Y, MAX_Y);
+
+const genObj = () => {
   const d = {
     driverName: randopeep.name(),
     driverCityOrigin: randopeep.address.city(),
@@ -23,15 +34,31 @@ function genObj() {
     driverInfo: randopeep.corporate.catchPhrase(0),
     carMake: randopeep.corporate.name('large', 0),
     kmDriven: Math.floor(Math.random() * 100000),
-    location: randopeep.address.geo(),
+    location: {
+      x: randInterval(MIN_X, MAX_X),
+      y: randInterval(MIN_Y, MAX_Y),
+    },
   };
   driverData.push(d);
-}
+};
+
+//Generate 10 objects to work with in the backend for the front end
+for (let i = 0; i < 20; i++) genObj();
 
 // Here we generate data for the api that can be used in the front end
 setInterval(() => {
-  //TODO: Move object location random every 5 seconds
-  console.log('emitting obj');
+  // Randomly select & move some of the drivers
+  driverData = driverData.map(({ location, ...o }) => {
+    if (Math.random() < 0.5) return { ...o, location };
+    return {
+      ...o,
+      location: {
+        x: clampX(location.x + randInterval(-5, 5)),
+        y: clampY(location.y + randInterval(-5, 5)),
+      },
+    };
+  });
+  console.log('emitting obj', driverData);
   eventEmitter.emit('update', driverData);
 }, 5000);
 

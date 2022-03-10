@@ -1,8 +1,8 @@
-import './App.css';
+import './App.scss';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { subscribeDrivers } from 'store/slices/drivers/actions';
-import { InfiniteViewerWrapper } from 'components/infinite-viewer/InfiniteViewer';
+import { Editor } from 'components/editor/Editor';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -11,7 +11,7 @@ const App = () => {
   }, [dispatch]);
   return (
     <div className="App">
-      <InfiniteViewerWrapper />
+      <Editor />
     </div>
   );
 };

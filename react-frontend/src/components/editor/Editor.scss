@@ -1,0 +1,10 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  .infinite-viewer-hor {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+  }
+}

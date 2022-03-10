@@ -5,6 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "randopeep": "^0.2.5",
+    "uuid": "^8.3.2",
     "websocket": "^1.0.34"
   },
   "scripts": {

@@ -1,4 +1,5 @@
 export interface IDriver {
+  id: string;
   driverName: string;
   driverCityOrigin: string;
   driverLanguage: string;
@@ -8,6 +9,10 @@ export interface IDriver {
   carMake: string;
   kmDriven: number;
   location: { x: number; y: number };
+}
+
+export interface IDrivers {
+  data: { [id: string]: IDriver };
 }
 
 export const driverActionType = {

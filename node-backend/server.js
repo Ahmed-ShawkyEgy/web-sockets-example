@@ -2,16 +2,18 @@
 const http = require('http');
 const randopeep = require('randopeep');
 const EventEmitter = require('events');
+const { data } = require('randopeep');
 const WebSocketServer = require('websocket').server;
+const uuid4 = require('uuid').v4;
 
-const MIN_X = 0;
-const MAX_X = 100;
-const MIN_Y = 0;
-const MAX_Y = 100;
+const MIN_X = 100;
+const MAX_X = 3000;
+const MIN_Y = 100;
+const MAX_Y = 3000;
 
 const eventEmitter = new EventEmitter();
 
-let driverData = [];
+let driverData = {};
 
 // min and max included
 const randInterval = (min, max) => {
@@ -23,7 +25,9 @@ const clampX = (x) => clamp(x, MIN_X, MAX_X);
 const clampY = (y) => clamp(y, MIN_Y, MAX_Y);
 
 const genObj = () => {
-  const d = {
+  const id = uuid4();
+  const driver = {
+    id,
     driverName: randopeep.name(),
     driverCityOrigin: randopeep.address.city(),
     driverLanguage: ['de', 'en', 'nl', 'fr', 'es', 'ar'][
@@ -39,28 +43,34 @@ const genObj = () => {
       y: randInterval(MIN_Y, MAX_Y),
     },
   };
-  driverData.push(d);
+  driverData[id] = driver;
 };
 
-//Generate 10 objects to work with in the backend for the front end
+//Generate 20 objects to work with in the backend for the front end
 for (let i = 0; i < 20; i++) genObj();
 
 // Here we generate data for the api that can be used in the front end
 setInterval(() => {
   // Randomly select & move some of the drivers
-  driverData = driverData.map(({ location, ...o }) => {
-    if (Math.random() < 0.5) return { ...o, location };
-    return {
-      ...o,
-      location: {
-        x: clampX(location.x + randInterval(-5, 5)),
-        y: clampY(location.y + randInterval(-5, 5)),
-      },
-    };
-  });
-  console.log('emitting obj', driverData);
-  eventEmitter.emit('update', driverData);
-}, 5000);
+  let randomSample = {};
+  for (let [id, driver] of Object.entries(driverData)) {
+    if (Math.random() < 0.5) {
+      const x = driver.location.x;
+      const y = driver.location.y;
+      randomSample[id] = {
+        ...driver,
+        location: {
+          x: clampX(x + randInterval(-50, 50)),
+          y: clampY(y + randInterval(-50, 50)),
+        },
+      };
+    }
+  }
+
+  eventEmitter.emit('update', randomSample);
+  console.log('random emit');
+  driverData = { ...driverData, ...randomSample };
+}, 1000 * 1);
 
 const server = http.createServer((request, response) => {
   console.log(new Date() + ' Received request for ' + request.url);
@@ -79,6 +89,7 @@ const wsServer = new WebSocketServer({
 
 wsServer.on('connect', (connection) => {
   console.log(new Date() + ' Connection accepted');
+  connection.send(JSON.stringify(driverData));
 
   const listener = (data) => {
     console.log('Receiving data ', data);

@@ -7,12 +7,16 @@ import {
   viewerZoomSelector,
 } from 'store/slices/viewer/selectors';
 import { setViewerLocation, setViewerZoom } from 'store/slices/viewer/actions';
+import { driversSelector } from 'store/slices/drivers/selectors';
+import { DriverRenderer } from './DriverRenderer';
 
 export const InfiniteViewerWrapper = () => {
   const viewerRef = useRef(null);
   const dispatch = useDispatch();
   const { x, y } = useSelector(viewerLocSelector);
   const zoom = useSelector(viewerZoomSelector);
+
+  const drivers = useSelector(driversSelector);
 
   const [isDragging, setIsDragging] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -43,6 +47,7 @@ export const InfiniteViewerWrapper = () => {
       <InfiniteViewer
         className="infinite-viewer"
         ref={viewerRef}
+        
         rangeX={[-1000, 1000]}
         rangeY={[-1000, 1000]}
         zoom={zoom}
@@ -59,7 +64,11 @@ export const InfiniteViewerWrapper = () => {
         displayHorizontalScroll
         displayVerticalScroll
       >
-        <svg></svg>
+        <svg>
+          {(drivers ?? []).map((driver) => (
+            <DriverRenderer driver={driver} />
+          ))}
+        </svg>
       </InfiniteViewer>
     </div>
   );

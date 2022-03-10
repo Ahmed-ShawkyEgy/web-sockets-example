@@ -1,16 +1,19 @@
 import { produce } from 'immer';
-import { driverActionType } from './types';
+import { driverActionType, IDrivers } from './types';
 
-const initialState = { data: [] };
+const initialState: IDrivers = { data: {} };
 
-export const driversReducer = produce((state = initialState, action) => {
-  switch (action.type) {
-    case driverActionType.SET_DRIVERS: {
-      state.data = action.payload;
-      return state;
+export const driversReducer = produce(
+  (state: IDrivers = initialState, action) => {
+    switch (action.type) {
+      case driverActionType.SET_DRIVERS: {
+        const drivers = action.payload ?? {};
+        state.data = { ...state.data, ...drivers };
+        return state;
+      }
+
+      default:
+        return state;
     }
-
-    default:
-      return state;
   }
-});
+);

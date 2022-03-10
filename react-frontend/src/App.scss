@@ -1,0 +1,10 @@
+.App {
+  display: flex;
+  .info-panel {
+    width: 300px;
+  }
+
+  .editor {
+    width: calc(100vw - 300px);
+  }
+}

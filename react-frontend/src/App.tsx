@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { subscribeDrivers } from 'store/slices/drivers/actions';
 import { Editor } from 'components/editor/Editor';
+import { InfoPanel } from 'components/info-panel/InfoPanel';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -11,6 +12,7 @@ const App = () => {
   }, [dispatch]);
   return (
     <div className="App">
+      <InfoPanel />
       <Editor />
     </div>
   );

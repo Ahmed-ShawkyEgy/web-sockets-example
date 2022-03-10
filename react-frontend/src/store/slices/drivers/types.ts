@@ -2,9 +2,9 @@ export interface IDriver {
   id: string;
   driverName: string;
   driverCityOrigin: string;
-  driverLanguage: string;
+  driverLanguage: 'de' | 'en' | 'nl' | 'fr' | 'es' | 'ar';
   driverPhone: string;
-  driverGender: string;
+  driverGender: 'male' | 'female';
   driverInfo: string;
   carMake: string;
   kmDriven: number;
@@ -13,10 +13,12 @@ export interface IDriver {
 
 export interface IDrivers {
   data: { [id: string]: IDriver };
+  selectedDriverId: string | null;
 }
 
 export const driverActionType = {
   SUBSCRIBE_DRIVERS: 'SUBSCRIBE_DRIVERS',
   UNSUBSCRIBE_DRIVERS: 'UNSUBSCRIBE_DRIVERS',
   SET_DRIVERS: 'SET_DRIVERS',
+  SET_SELECTED_DRIVER_ID: 'SET_SELECTED_DRIVER_ID',
 };

@@ -27,3 +27,8 @@ export const unsubscribeDrivers = () => (dispatch, getState) => {
     client.close();
   }
 };
+
+export const setSelectedDriverId = (id) => ({
+  type: driverActionType.SET_SELECTED_DRIVER_ID,
+  payload: id,
+});

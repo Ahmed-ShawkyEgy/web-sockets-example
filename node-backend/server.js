@@ -2,7 +2,6 @@
 const http = require('http');
 const randopeep = require('randopeep');
 const EventEmitter = require('events');
-const { data } = require('randopeep');
 const WebSocketServer = require('websocket').server;
 const uuid4 = require('uuid').v4;
 

@@ -1,6 +1,6 @@
 import './Editor.scss';
 import { InfiniteViewerWrapper } from 'components/infinite-viewer/InfiniteViewer';
-import { Ruler } from 'components/Ruler/Ruler';
+import { Ruler } from 'components/ruler/Ruler';
 import React from 'react';
 
 export const Editor = () => {

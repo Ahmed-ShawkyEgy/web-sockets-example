@@ -6,9 +6,9 @@ const WebSocketServer = require('websocket').server;
 const uuid4 = require('uuid').v4;
 
 const MIN_X = 100;
-const MAX_X = 3000;
+const MAX_X = 5000;
 const MIN_Y = 100;
-const MAX_Y = 3000;
+const MAX_Y = 5000;
 
 const eventEmitter = new EventEmitter();
 
@@ -59,17 +59,16 @@ setInterval(() => {
       randomSample[id] = {
         ...driver,
         location: {
-          x: clampX(x + randInterval(-50, 50)),
-          y: clampY(y + randInterval(-50, 50)),
+          x: clampX(x + randInterval(-100, 100)),
+          y: clampY(y + randInterval(-100, 100)),
         },
       };
     }
   }
 
   eventEmitter.emit('update', randomSample);
-  console.log('random emit');
   driverData = { ...driverData, ...randomSample };
-}, 1000 * 1);
+}, 1000 * 0.5);
 
 const server = http.createServer((request, response) => {
   console.log(new Date() + ' Received request for ' + request.url);
@@ -91,7 +90,6 @@ wsServer.on('connect', (connection) => {
   connection.send(JSON.stringify(driverData));
 
   const listener = (data) => {
-    console.log('Receiving data ', data);
     connection.send(JSON.stringify(data));
   };
 

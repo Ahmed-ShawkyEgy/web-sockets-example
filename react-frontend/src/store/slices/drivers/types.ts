@@ -13,6 +13,7 @@ export interface IDriver {
 
 export interface IDrivers {
   data: { [id: string]: IDriver };
+  pathData: { [id: string]: { x: number; y: number }[] };
   selectedDriverId: string | null;
 }
 

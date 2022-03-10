@@ -47,7 +47,6 @@ export const InfiniteViewerWrapper = () => {
       <InfiniteViewer
         className="infinite-viewer"
         ref={viewerRef}
-        
         rangeX={[-1000, 1000]}
         rangeY={[-1000, 1000]}
         zoom={zoom}
@@ -57,7 +56,7 @@ export const InfiniteViewerWrapper = () => {
         }}
         onPinch={(e) => {
           let newZoom = e.zoom;
-          newZoom = Math.max(0.5, newZoom);
+          newZoom = Math.max(0.3, newZoom);
           newZoom = Math.min(4, newZoom);
           dispatch(setViewerZoom(newZoom));
         }}
@@ -66,7 +65,7 @@ export const InfiniteViewerWrapper = () => {
       >
         <svg>
           {(drivers ?? []).map((driver) => (
-            <DriverRenderer driver={driver} />
+            <DriverRenderer driver={driver} key={driver.id} />
           ))}
         </svg>
       </InfiniteViewer>

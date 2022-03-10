@@ -3,6 +3,9 @@ import { IDrivers } from './types';
 
 type driversSlice = { drivers: IDrivers };
 
+export const driversPathsSelector = (store: driversSlice) =>
+  store.drivers.pathData;
+
 export const driversSelector = (store: driversSlice) =>
   Object.values(store.drivers.data);
 

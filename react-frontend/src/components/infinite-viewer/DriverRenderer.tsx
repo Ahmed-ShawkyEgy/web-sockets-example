@@ -1,7 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedDriverId } from 'store/slices/drivers/actions';
-import { selectedDriverIdSelector } from 'store/slices/drivers/selectors';
+import {
+  driversPathsSelector,
+  selectedDriverIdSelector,
+} from 'store/slices/drivers/selectors';
 import { IDriver } from 'store/slices/drivers/types';
 
 interface propTypes {
@@ -14,7 +17,28 @@ export const DriverRenderer = ({ driver }: propTypes) => {
   const { x, y } = driver.location;
   const selectedDriverId = useSelector(selectedDriverIdSelector);
 
+  const driversPaths = useSelector(driversPathsSelector);
+
+  const myPaths = driversPaths[id] ?? [];
+
   const isSelected = selectedDriverId === id;
+
+  const renderPath = () => {
+    let d = 'M ';
+
+    myPaths.forEach(({ x, y }) => {
+      d += `${x} ${y} `;
+    });
+    return (
+      <path
+        d={d}
+        stroke="yellow"
+        strokeOpacity="0.25"
+        strokeWidth="5"
+        fill="none"
+      />
+    );
+  };
 
   const onClick = () => {
     dispatch(setSelectedDriverId(id));
@@ -22,6 +46,7 @@ export const DriverRenderer = ({ driver }: propTypes) => {
 
   return (
     <React.Fragment>
+      {renderPath()}
       <circle
         cx={x}
         cy={y}

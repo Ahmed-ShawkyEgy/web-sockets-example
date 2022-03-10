@@ -2,6 +2,7 @@ import './App.css';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { subscribeDrivers } from 'store/slices/drivers/actions';
+import { InfiniteViewerWrapper } from 'components/infinite-viewer/InfiniteViewer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -10,16 +11,7 @@ const App = () => {
   }, [dispatch]);
   return (
     <div className="App">
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <InfiniteViewerWrapper />
     </div>
   );
 };
